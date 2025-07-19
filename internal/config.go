@@ -43,6 +43,13 @@ func GetString(m map[string]interface{}, key string) string {
 	return ""
 }
 
+func GetFloat64(m map[string]interface{}, key string) float64 {
+	if val, ok := m[key].(float64); ok {
+		return val
+	}
+	return 0.0
+}
+
 func GetJson(url string, headers map[string]string) (interface{}, error) {
 	client := &http.Client{}
 

@@ -91,6 +91,10 @@ func FetchAnimeSeasonsData(id int) ([]int, error) {
 		return nil, fmt.Errorf("'videos' key not found")
 	}
 
+	if len(videosField) == 0 {
+		return nil, fmt.Errorf("no videos found")
+	}
+
 	video, ok := videosField[0].(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("'videos'[0] is not a map")
@@ -104,6 +108,10 @@ func FetchAnimeSeasonsData(id int) ([]int, error) {
 	seasons, ok := title["seasons"].([]interface{})
 	if !ok {
 		return nil, fmt.Errorf("'seasons' key not found")
+	}
+
+	if len(seasons) == 0 {
+		return nil, fmt.Errorf("no seasons found")
 	}
 
 	count := len(seasons)
@@ -122,6 +130,10 @@ func FetchAnimeEpisodesData(id int) ([]map[string]interface{}, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if len(seasons) == 0 {
+		return nil, fmt.Errorf("no seasons available for this anime")
 	}
 
 	for _, seasonIndex := range seasons {
@@ -197,6 +209,9 @@ func AnimeWatchApiUrl(Url string) ([]map[string]string, error) {
 	queryParams := parsedUrl.Query()
 	vid := queryParams.Get("vid")
 
+	if len(configAnimecix.VideoPlayers) == 0 {
+		return nil, fmt.Errorf("no video players configured")
+	}
 	apiUrl := fmt.Sprintf("https://%s/api/video/%s?vid=%s", configAnimecix.VideoPlayers[0], embedID, vid)
 
 	response, err := http.Get(apiUrl)
@@ -247,6 +262,10 @@ func FetchTRCaption(seasonIndex, episodeIndex, id int) (string, error) {
 		return "", fmt.Errorf("'videos' key not found")
 	}
 
+	if episodeIndex >= len(videosSlice) || episodeIndex < 0 {
+		return "", fmt.Errorf("episode index out of range")
+	}
+
 	video, ok := videosSlice[episodeIndex].(map[string]interface{})
 	if !ok {
 		return "", fmt.Errorf("episode not found")
@@ -258,22 +277,29 @@ func FetchTRCaption(seasonIndex, episodeIndex, id int) (string, error) {
 	}
 
 	for _, caption := range captions {
-		caption, ok := caption.(map[string]interface{})
-		if !ok {
+		captionMap, captionOk := caption.(map[string]interface{})
+		if !captionOk {
 			return "", fmt.Errorf("caption not found")
 		}
 
-		lang, ok := caption["language"].(string)
-		if ok && lang == "tr" {
-			return caption["url"].(string), nil
+		lang, langOk := captionMap["language"].(string)
+		if langOk && lang == "tr" {
+			return captionMap["url"].(string), nil
 		}
 	}
 
 	if len(captions) == 0 {
 		return "", fmt.Errorf("no captions found")
 	}
-	caption0 := captions[0].(map[string]interface{})
-	return caption0["url"].(string), nil
+	caption0, ok := captions[0].(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("first caption is not a map")
+	}
+	captionUrl, ok := caption0["url"].(string)
+	if !ok {
+		return "", fmt.Errorf("caption url is not a string")
+	}
+	return captionUrl, nil
 }
 
 func AnimeMovieWatchApiUrl(id int) (map[string]interface{}, error) {
@@ -368,6 +394,9 @@ func AnimeMovieWatchApiUrl(id int) (map[string]interface{}, error) {
 		queryParams := parsedUrl.Query()
 		vid := queryParams.Get("vid")
 
+		if len(configAnimecix.VideoPlayers) == 0 {
+			return nil, fmt.Errorf("no video players configured")
+		}
 		apiUrl := fmt.Sprintf("https://%s/api/video/%s?vid=%s", configAnimecix.VideoPlayers[0], embedID, vid)
 
 		response, err := http.Get(apiUrl)
@@ -412,19 +441,23 @@ func AnimeMovieWatchApiUrl(id int) (map[string]interface{}, error) {
 		}
 
 		for _, caption := range captions {
-			caption, ok := caption.(map[string]interface{})
-			if !ok {
+			captionMap, captionOk := caption.(map[string]interface{})
+			if !captionOk {
 				return nil, fmt.Errorf("caption unexpected format")
 			}
 
-			lang, ok := caption["language"].(string)
-			if ok && lang == "tr" {
-				result["caption_url"] = caption["url"]
+			lang, langOk := captionMap["language"].(string)
+			if langOk && lang == "tr" {
+				result["caption_url"] = captionMap["url"]
 			} else {
 				if len(captions) == 0 {
 					return nil, fmt.Errorf("no captions found")
 				}
-				result["caption_url"] = captions[0].(map[string]interface{})["url"]
+				firstCaption, firstOk := captions[0].(map[string]interface{})
+				if !firstOk {
+					return nil, fmt.Errorf("first caption is not a map")
+				}
+				result["caption_url"] = firstCaption["url"]
 			}
 
 			return result, nil

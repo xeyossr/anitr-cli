@@ -53,6 +53,19 @@ Bu proje Linux için geliştirilmiştir. **Windows kullanıcıları**, [anitr-cl
 
 > 🔗 [https://github.com/mstsecurity/anitr-cli-windows](https://github.com/mstsecurity/anitr-cli-windows)
 
+## ✨ Özellikler
+
+- **🔍 Hızlı Anime Arama**: Anime adı ile hızlı arama
+- **🇹🇷 Türkçe Altyazı Desteği**: Otomatik Türkçe altyazı bulma
+- **⭐ Favori Sistemi**: Sevdiğiniz animeleri favorilere ekleyin
+- **📚 İzleme Geçmişi**: İzlediğiniz bölümleri takip edin
+- **🎮 Discord Rich Presence**: Discord'da ne izlediğinizi gösterin
+- **🖥️ Çoklu UI Desteği**: Modern Bubble Tea TUI ve Rofi arayüzleri
+- **📺 Çoklu Çözünürlük**: 720p, 1080p seçenekleri
+- **🔄 Otomatik Güncelleme**: En son sürüme otomatik güncelleme
+- **🎨 Modern UI**: Bubble Tea framework ile geliştirilmiş interaktif arayüz
+- **⌨️ Klavye Navigasyonu**: Vim benzeri klavye kısayolları (hjkl)
+
 ## 👾 Kullanım
 
 ```bash
@@ -68,6 +81,43 @@ Usage of ./anitr-cli:
   -version
     	versiyon
 ```
+
+### 🎯 Ana Menü Seçenekleri
+
+1. **Anime Ara**: Yeni anime aramak için
+2. **Favoriler**: Favori animelerinizi görüntüleyin ve izleyin
+3. **İzleme Geçmişi**: Son izlediğiniz animeleri görün
+4. **Gelişmiş Arama**: Filtreleme seçenekleri (yakında)
+5. **Çıkış**: Uygulamadan çık
+
+### 📁 Veri Depolama
+
+Uygulama verileriniz şu konumda saklanır:
+- **Linux/macOS**: `~/.config/anitr-cli/`
+  - `favorites.json`: Favori animeleriniz
+  - `history.json`: İzleme geçmişiniz
+
+### 🎮 Klavye Kısayolları
+
+#### Ana Menü
+- `↑/↓` veya `j/k`: Yukarı/aşağı hareket
+- `Enter` veya `Space`: Seçim yapma
+- `q` veya `Ctrl+C`: Çıkış
+
+#### Arama Ekranı
+- `Yazma`: Arama terimi girme
+- `Enter`: Arama yapma
+- `Backspace`: Son karakteri silme
+- `Esc`: Ana menüye dönme
+
+#### Favoriler/Geçmiş
+- `↑/↓` veya `j/k`: Liste navigasyonu
+- `Enter` veya `Space`: Anime seçme
+- `Esc`: Ana menüye dönme
+
+#### Genel
+- `Ctrl+C`: Uygulamadan çıkış
+- `q`: Hızlı çıkış (ana menüde)
 
 ## Sorunlar
 
